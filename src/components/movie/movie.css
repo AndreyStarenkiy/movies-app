@@ -1,0 +1,12 @@
+.movie {
+  display: flex;
+  width: 451px;
+  height: 279px;
+  box-shadow: 0px 4px 12px 0px #00000026;
+  overflow-wrap:break-word;
+}
+
+.movie__poster {
+  width: 183px;
+  height: 281px;
+}

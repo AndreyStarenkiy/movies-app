@@ -1,0 +1,13 @@
+.app {
+  padding: 2rem;
+  width: 1010px;
+  height: 100vh;
+  background-color: white;
+}
+
+ul,
+li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
