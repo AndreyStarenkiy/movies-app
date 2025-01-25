@@ -56,6 +56,7 @@
         }
       ],
       //"tabWidth": 2,
+      "max-len": ["error", 120],
       "linebreak-style": [0, "unix"],
       "operator-linebreak": [0, "after"],
       "singleQuote": 0,
