@@ -1,6 +1,7 @@
 import './movie.css';
 import React, { Component } from 'react';
-import { Tag } from 'antd';
+import { Tag, Spin } from 'antd';
+import { format, parseISO } from 'date-fns';
 import _ from 'lodash';
 
 function truncateOverview(overview) {
@@ -8,6 +9,12 @@ function truncateOverview(overview) {
     length: '256',
     separator: ' '
   });
+}
+
+function formatDate(dateString) {
+  const date = parseISO(dateString);
+
+  return format(date, 'MMMM d, yyyy');
 }
 
 export default class Movie extends Component {
@@ -20,18 +27,32 @@ export default class Movie extends Component {
   };
 
   render() {
-    const { id, posterLink, title, releaseDate, overview } = this.state;
-
-    return (
-      <li className="movie" key={id}>
+    const { id, posterLink, title, releaseDate, overview, loading } = this.state;
+    const image =
+      posterLink === null ? (
+        <Spin />
+      ) : (
         <img
           src={`https://image.tmdb.org/t/p/original/${posterLink}`}
           alt={`"${title}" poster`}
           className="movie__poster"
         ></img>
+      );
+
+    if (loading) {
+      return (
+        <li className="movie" key={id}>
+          <Spin />
+        </li>
+      );
+    }
+
+    return (
+      <li className="movie">
+        <div className="movie__image-container"> {image} </div>
         <div className="movie__info">
           <h5 className="movie__name">{title}</h5>
-          <time className="movie__date">{releaseDate}</time>
+          <time className="movie__date">{formatDate(releaseDate)}</time>
           <div className="movie__tag-list">
             <Tag />
           </div>

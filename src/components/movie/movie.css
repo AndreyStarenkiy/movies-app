@@ -45,3 +45,11 @@
 .movie__tag-list {
   display: flex;
 }
+
+.movie__image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 183px;
+  min-height: 281px;
+}

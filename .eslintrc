@@ -27,7 +27,7 @@
         "ObjectExpression": { "multiline": true, "minProperties": 2},
         "ObjectPattern": { "multiline": true },
         "ImportDeclaration": "never",
-        "ExportDeclaration": { "multiline": false, "minProperties": 3 },
+        "ExportDeclaration": { "multiline": false, "minProperties": 3 }
       }],
       "indent": ["error", 2, {"SwitchCase": 1}],
       "prettier/prettier": "error",
@@ -60,6 +60,7 @@
       "linebreak-style": [0, "unix"],
       "operator-linebreak": [0, "after"],
       "singleQuote": 0,
+      "arrow-body-style": 0,
       "import/no-named-as-default": 0,
       "import/extensions": ["off"],
       "react/prop-types": 0,
@@ -79,7 +80,6 @@
       "react": {
         "version": "detect",
         "defaultVersion": "18.3.1"
-      },
-      "arrow-body-style": ["never"]
+      }
     }
 }

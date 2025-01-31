@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Spin } from 'antd';
 import _ from 'lodash';
 
 import Movie from '../movie/movie';
@@ -9,22 +10,22 @@ import './app.css';
 export default class App extends Component {
   constructor() {
     super();
+    this.state = {
+      movies: [
+        {
+          title: null,
+          date: null,
+          genres: null,
+          description: null,
+          posterLink: null,
+          id: null
+        }
+      ],
+      loading: true,
+      error: false
+    };
     this.getMoviesInfo();
   }
-
-  state = {
-    movies: [
-      {
-        title: null,
-        date: null,
-        genres: null,
-        description: null,
-        posterLink: null,
-        id: null
-      }
-    ],
-    smth: null
-  };
 
   MoviesdbService = new MoviesdbService();
 
@@ -32,7 +33,7 @@ export default class App extends Component {
     this.MoviesdbService.getMovies('return')
       .then((res) => {
         const movies = [];
-        // console.log(res.results[1].id);
+
         for (let i = 0; i < 6; i += 1) {
           movies.push({
             title: res.results[i].title,
@@ -44,28 +45,41 @@ export default class App extends Component {
           });
         }
         // console.log(movies);
-        return movies;
+        this.setState({
+          movies,
+          loading: false
+        });
       })
-      .then((movies) => {
-        this.setState((state) => {
-          const burger = 2;
-          return { movies };
-        }, console.log(this.state));
+      .catch(() => {
+        this.setState({
+          error: true,
+          loading: false
+        });
       });
     // this.setState((state) => console.log(state));
   }
 
   render() {
     // let tagId = 0;
-    const { movies } = this.state;
+    const { movies, loading, error } = this.state;
     const tags = [];
     const elements = [];
 
-    console.log(this.state);
+    if (loading) {
+      return <Spin size="large" />;
+    }
+
+    if (error) {
+      return (
+        <div className="app">
+          <h1>Ain`t nobody here but us chickens!</h1>
+        </div>
+      );
+    }
 
     for (let i = 0; i < 6; i += 1) {
       if (movies.length <= 3) {
-        return <div>Данных недостаточно</div>;
+        return <Spin size="large" />;
       }
 
       elements.push(
@@ -75,6 +89,7 @@ export default class App extends Component {
           title={movies[i].title}
           releaseDate={movies[i].releaseDate}
           overview={movies[i].overview}
+          loading={loading}
         />
       );
     }
