@@ -2,4 +2,9 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 2.25rem;
+  padding: 2.25rem;
+}
+
+.error-message {
+  padding: 2.25rem;
 }

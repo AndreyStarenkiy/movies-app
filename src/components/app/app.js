@@ -8,97 +8,111 @@ import MoviesdbService from '../../services/moviedbService/moviesdbService';
 import './app.css';
 
 export default class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      movies: [
-        {
-          title: null,
-          date: null,
-          genres: null,
-          description: null,
-          posterLink: null,
-          id: null
-        }
-      ],
-      loading: true,
-      error: false
-    };
-    this.getMoviesInfo();
-  }
+  state = {
+    movies: undefined,
+    loading: false,
+    error: false,
+    searchValue: '',
+    firstVisit: true
+  };
 
   MoviesdbService = new MoviesdbService();
 
-  getMoviesInfo() {
-    this.MoviesdbService.getMovies('return')
-      .then((res) => {
-        const movies = [];
+  getMoviesInfo = (searchValue) => {
+    this.setState({ loading: true });
 
-        for (let i = 0; i < 6; i += 1) {
-          movies.push({
-            title: res.results[i].title,
-            releaseDate: res.results[i].release_date,
-            genres: res.results[i].genre_ids,
-            overview: res.results[i].overview,
-            posterLink: res.results[i].poster_path,
-            id: res.results[i].id
+    if (this.state.searchValue !== '') {
+      this.MoviesdbService.getMovies(searchValue)
+        .then((res) => {
+          if (res.total_results === 0) {
+            this.setState({
+              movies: undefined,
+              loading: false,
+              firstVisit: false
+            });
+          } else {
+            let movies = [];
+
+            movies = res.results.map((movie) => {
+              return {
+                title: movie.title,
+                releaseDate: movie.release_date,
+                genres: movie.genre_ids,
+                overview: movie.overview,
+                posterLink: movie.poster_path,
+                id: movie.id
+              };
+            });
+
+            this.setState({
+              movies,
+              loading: false,
+              firstVisit: false
+            });
+          }
+        })
+        .catch(() => {
+          this.setState({
+            error: true,
+            loading: false
           });
-        }
-        // console.log(movies);
-        this.setState({
-          movies,
-          loading: false
         });
-      })
-      .catch(() => {
-        this.setState({
-          error: true,
-          loading: false
-        });
+    } else {
+      this.setState({
+        error: false,
+        loading: false,
+        firstVisit: false
       });
-    // this.setState((state) => console.log(state));
-  }
+    }
+  };
+
+  handleInputChange = (e) => {
+    this.setState({ searchValue: e.target.value });
+  };
+
+  handleInputSubmit = (e) => {
+    if (e.key === 'Enter') {
+      this.getMoviesInfo(this.state.searchValue);
+    }
+  };
 
   render() {
-    // let tagId = 0;
-    const { movies, loading, error } = this.state;
+    const { movies, loading, error, searchValue, firstVisit } = this.state;
     const tags = [];
-    const elements = [];
+    let elements;
 
-    if (loading) {
-      return <Spin size="large" />;
-    }
-
-    if (error) {
-      return (
-        <div className="app">
-          <h1>Ain`t nobody here but us chickens!</h1>
-        </div>
-      );
-    }
-
-    for (let i = 0; i < 6; i += 1) {
-      if (movies.length <= 3) {
-        return <Spin size="large" />;
-      }
-
-      elements.push(
-        <Movie
-          key={movies[i].id}
-          posterLink={movies[i].posterLink}
-          title={movies[i].title}
-          releaseDate={movies[i].releaseDate}
-          overview={movies[i].overview}
-          loading={loading}
-        />
-      );
+    if (firstVisit) {
+      elements = <h1>Привет! Введи название фильма</h1>;
+    } else if (!firstVisit && movies === undefined) {
+      elements = <h1>По вашему запросу ничего не найдено!</h1>;
+    } else if (!error && movies !== undefined) {
+      elements = movies.map((movie) => {
+        return (
+          <Movie
+            key={movie.id}
+            posterLink={movie.posterLink}
+            title={movie.title}
+            releaseDate={movie.releaseDate}
+            overview={movie.overview}
+            loading={loading}
+          />
+        );
+      });
     }
 
     return (
       <div className="app">
-        <header className="header"></header>
+        <header className="header">
+          <input
+            className="header__input"
+            placeholder="Type to search..."
+            value={searchValue}
+            onChange={this.handleInputChange}
+            onKeyDown={this.handleInputSubmit}
+          ></input>
+        </header>
         <main className="main">
-          <MovieList elements={elements} tagList={tags} />
+          <MovieList loading={loading} elements={elements} tagList={tags} error={error} searchValue={searchValue} />
         </main>
         <footer className="footer"></footer>
       </div>

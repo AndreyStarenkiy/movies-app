@@ -12,6 +12,10 @@ function truncateOverview(overview) {
 }
 
 function formatDate(dateString) {
+  if (dateString === '') {
+    return null;
+  }
+
   const date = parseISO(dateString);
 
   return format(date, 'MMMM d, yyyy');
@@ -30,7 +34,10 @@ export default class Movie extends Component {
     const { id, posterLink, title, releaseDate, overview, loading } = this.state;
     const image =
       posterLink === null ? (
-        <Spin />
+        <>
+          <Spin />
+          <span>Постер не найден :(</span>
+        </>
       ) : (
         <img
           src={`https://image.tmdb.org/t/p/original/${posterLink}`}
