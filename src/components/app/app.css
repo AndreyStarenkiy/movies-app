@@ -1,6 +1,6 @@
 .app {
   width: 1010px;
-  height: 100vh;
+  min-height: 100vh;
   background-color: white;
 }
 
@@ -10,6 +10,10 @@
   left: 50%;
   margin-top: -1.25rem;
   inset-inline-start: 50%;
+}
+
+.main {
+  height: 100%;
 }
 
 .header {
@@ -43,4 +47,14 @@ li {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.pagination {
+  text-align: center;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-around;
+  padding-bottom: 1rem;
 }

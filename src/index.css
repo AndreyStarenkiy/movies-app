@@ -21,6 +21,6 @@ code {
 html,
 body {
   background-color: #f7f7f7;
-  height: 100%;
+  min-height: 100vh;
   font-size: 16px;
 }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Spin } from 'antd';
+import { Pagination, Debounce } from 'antd';
 import _ from 'lodash';
 
 import Movie from '../movie/movie';
@@ -13,16 +13,18 @@ export default class App extends Component {
     loading: false,
     error: false,
     searchValue: '',
-    firstVisit: true
+    firstVisit: true,
+    currentPage: 1,
+    totalMovies: null,
+    pageSize: 20
   };
 
   MoviesdbService = new MoviesdbService();
 
-  getMoviesInfo = (searchValue) => {
+  getMoviesInfo = (searchValue, page = 1) => {
     this.setState({ loading: true });
-
-    if (this.state.searchValue !== '') {
-      this.MoviesdbService.getMovies(searchValue)
+    if (searchValue !== '') {
+      this.MoviesdbService.getMovies(searchValue, page)
         .then((res) => {
           if (res.total_results === 0) {
             this.setState({
@@ -47,7 +49,8 @@ export default class App extends Component {
             this.setState({
               movies,
               loading: false,
-              firstVisit: false
+              firstVisit: false,
+              totalMovies: res.total_results
             });
           }
         })
@@ -76,8 +79,42 @@ export default class App extends Component {
     }
   };
 
+  handlePageButton = (page) => {
+    this.setState({ currentPage: page });
+
+    this.getMoviesInfo(this.state.searchValue, page);
+  };
+
+  onSearch = (e) => {
+    this.setState({ searchValue: e.target.value });
+    this.debouncedGetMoviesInfo(e.target.value, 1);
+    // console.log('onSearch active', e.target.value);
+    // this.setState({ searchValue: e.target.value });
+    /* this.setState(() => {
+      this.getMoviesInfo(e.target.value);
+
+      return { searchValue: e.target.value };
+    }); */
+    // this.getMoviesInfo(e.target.value);
+  };
+
+  debouncedGetMoviesInfo = _.debounce(this.getMoviesInfo, 2000);
+
   render() {
-    const { movies, loading, error, searchValue, firstVisit } = this.state;
+    const { movies, loading, error, searchValue, firstVisit, currentPage, totalMovies, pageSize } = this.state;
+    const pagination =
+      !firstVisit && !loading && !error && movies !== undefined ? (
+        <Pagination
+          total={totalMovies} // Total number of pages
+          defaultCurrent={1}
+          current={currentPage} // Current active page
+          onChange={this.handlePageButton} // Callback for page change
+          pageSize={pageSize} // Number of page buttons displayed
+          color="red" // Customize button colors
+          hideOnSinglePage={true}
+          showSizeChanger={false}
+        />
+      ) : null;
     const tags = [];
     let elements;
 
@@ -107,14 +144,14 @@ export default class App extends Component {
             className="header__input"
             placeholder="Type to search..."
             value={searchValue}
-            onChange={this.handleInputChange}
+            onChange={this.onSearch}
             onKeyDown={this.handleInputSubmit}
           ></input>
         </header>
         <main className="main">
           <MovieList loading={loading} elements={elements} tagList={tags} error={error} searchValue={searchValue} />
         </main>
-        <footer className="footer"></footer>
+        <footer className="footer">{pagination}</footer>
       </div>
     );
   }

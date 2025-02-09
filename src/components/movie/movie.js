@@ -6,7 +6,7 @@ import _ from 'lodash';
 
 function truncateOverview(overview) {
   return _.truncate(overview, {
-    length: '256',
+    length: '200',
     separator: ' '
   });
 }

@@ -1,6 +1,6 @@
 export default class MoviesdbService {
-  async getMovies(keyword, page) {
-    const url = `https://api.themoviedb.org/3/search/movie?query=${keyword}&include_adult=false&language=en-US&page=1`;
+  async getMovies(keyword, page = 1) {
+    const url = `https://api.themoviedb.org/3/search/movie?query=${keyword}&include_adult=false&language=en-US&page=${page}`;
     const options = {
       method: 'GET',
       headers: {

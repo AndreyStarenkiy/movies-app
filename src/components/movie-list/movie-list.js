@@ -10,7 +10,11 @@ export default class MovieList extends Component {
     const { elements, error, loading } = this.props;
 
     if (error) {
-      return <h1 className="error-message">Ain`t nobody here but us chickens!</h1>;
+      return (
+        <h1 className="error-message">
+          Ain`t nobody here but us chickens! <br></br> API Error{' '}
+        </h1>
+      );
     }
 
     if (loading) {
