@@ -20,6 +20,7 @@
     ],
     "plugins": ["@babel", "react", "react-hooks", "prettier"],
     "rules": {
+      "implicit-arrow-linebreak": "off",
       "comma-dangle": ["error", {
         "functions": "never"
       }],
